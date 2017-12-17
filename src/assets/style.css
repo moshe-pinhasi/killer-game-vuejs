@@ -1,0 +1,43 @@
+body {
+    font-family: 'Gloria Hallelujah', cursive;
+    background: #337ab7;
+}
+
+.game-title {
+    font-size: 60px;
+}
+
+.page-title {
+    font-size: 25px;
+}
+
+.actions-container {
+    padding: 30px 10px;
+}
+
+
+.fade-enter {
+    opacity: 0;
+}
+
+.fade-enter-active {
+    transition: opacity 1s;
+}
+
+.fade-leave {
+    opacity: 1;
+}
+
+.fade-leave-active {
+    transition: opacity 1s;
+    opacity: 0;
+}
+
+.swal-footer {
+    text-align: center;
+}
+
+/*
+    red: #d62d1d
+    blue: #337ab7;
+*/
