@@ -95,7 +95,8 @@ export default {
         width: 150px;
         height: 150px;
         position: relative;
-        background: white;
+        background-color: #337ab7;
+        color: #fff;
         border-radius: 15px;
         margin: 0 0 20px 0;
         cursor: pointer;

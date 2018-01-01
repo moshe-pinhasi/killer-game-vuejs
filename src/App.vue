@@ -2,7 +2,9 @@
   <div class="container text-center">
     
     <div class="row header">
-      <div class="game-title">Killer</div>
+      <div class="game-title">
+        <img src="./assets/images/killerTitle.png" alt="Killer" width="200px">
+      </div>
     </div>
     
     <router-view></router-view>

@@ -13,7 +13,10 @@
                 </div>
             </div>
             <div v-else>
-                <div>You did it!</div>
+                <div class="game-over-details">
+                    <div>{{killer.name}} you did it!</div>
+                    <div>You are the Killer!</div>
+                </div>
                 <div class="killer-details-footer">
                     <button class="btn btn-success btn-lg" @click="newGameClicked">New Game</button>
                 </div>
@@ -76,7 +79,11 @@ export default {
     }
 
     .killer-details-footer {
-        margin: 15px 0 0 0;
+        margin: 25px 0 0 0;
+    }
+
+    .game-over-details {
+        font-size: 30px;
     }
 </style>
 
