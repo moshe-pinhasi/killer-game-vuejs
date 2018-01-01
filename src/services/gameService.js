@@ -10,27 +10,39 @@ function _getRandomWord() {
     return word[0];
 }
 
-function _guid() {
-    function s4() {
-        return Math.floor((1 + Math.random()) * 0x10000)
-        .toString(16)
-        .substring(1);
-    }
-    return s4() + s4() + '-' + s4() + '-' + s4() + '-' +
-        s4() + '-' + s4() + s4() + s4();
+function _createPlayersData(players) {
+    return players.map( ({id, name}) => {
+        return {
+            id: id,
+            name: name,
+            killedWord: _getRandomWord(),
+            isAlive: true,
+            target: null
+        }
+    });
 }
 
-function _createPlayer(name) {
+function _getTargetDetails(target) {
     return {
-        id: _guid(),
-        name: name,
-        killedWord: _getRandomWord(),
-        isAlive: true
-    }
+        id: target.id,
+        name: target.name,
+        killedWord: target.killedWord,
+        isAlive: target.isAlive
+    };
 }
 
 function createPlayersArray(playersNames) {
-    return shuffle(playersNames.map( player => _createPlayer(player.name)));
+    const players =  _createPlayersData(playersNames);
+
+    for (var i = 0; i<players.length; i++) {
+        var j = i + 1;
+        if (j >= players.length) {
+            j = 0;
+        }
+
+        players[i].target = _getTargetDetails(players[j]);
+    }
+    return shuffle(players);
 }
 
 function shuffle(arr) {
@@ -41,7 +53,33 @@ function shuffle(arr) {
     return arr;
 }
 
+function updateTargets(killers, killerId) {
+    // find the player that is out of game
+    var killerOut = killers.find(k => k.id === killerId);
+    killerOut.isAlive = false;
+
+    var kiilersInGame = killers.filter(killer => killer.isAlive);
+    
+    // find the player that he was his target
+    var killingPlayer = killers.find(k => k.target.id === killerId);
+
+    if (kiilersInGame.length === 1) {
+        killingPlayer.target = null;
+    } else {
+        var newTarget = killers.find(k => k.id === killerOut.target.id);
+        killingPlayer.target = _getTargetDetails(newTarget);
+    }
+
+    return killers;
+}
+
+function isGameFinished(killers) {
+    return killers.filter(killer => killer.isAlive).length === 1;
+}
+
 export default {
     createPlayersArray,
-    shuffle
+    shuffle,
+    updateTargets,
+    isGameFinished
 }

@@ -32,7 +32,7 @@
 
 import {mapActions} from 'vuex';
 import { required, numeric, minValue } from 'vuelidate/lib/validators'
-import { WelcomePage, SetPlayersPage } from '../router'
+import { SetPlayersPage } from '../router'
 
 export default {
     data() {
@@ -40,11 +40,8 @@ export default {
         numPlayers: null
       }
     },
-    created() {
-      this.setPageView(WelcomePageName);
-    },
     methods: {
-      ...mapActions(['setNumOfPlayers', 'setPageView']),
+      ...mapActions(['setNumOfPlayers']),
       onSubmit() {
         this.setNumOfPlayers(this.numPlayers);
         this.$router.push({ name: SetPlayersPage });

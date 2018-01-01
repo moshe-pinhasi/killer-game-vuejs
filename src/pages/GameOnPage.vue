@@ -5,7 +5,13 @@
                     :key="killer.id" 
                     :class="colChosen">
 
-                    <div class="killer" @click="killerClicked(killer.id)" :disabled="!killer.isAlive">
+                    <div class="killer" 
+                        @click="killerClicked(killer.id)" 
+                        :disabled="!killer.isAlive">
+                        
+                        <img src="../assets/images/x.png" 
+                             v-if="!killer.isAlive"
+                             class="out-of-game"/>
                         <img :src="`https://robohash.org/${killer.id}?set=set3`" height="100px" />
                         <h4>{{killer.name}}</h4>
                     </div>
@@ -19,7 +25,7 @@
 <script>
 'use strict'
 
-import { GameOnPage } from '../router'
+import { GameOnPage, KillerDetails } from '../router'
 import { mapActions } from 'vuex';
 import GameService from '../services/gameService'
 import swal from 'sweetalert';
@@ -48,12 +54,8 @@ export default {
     created() {
         this.setPageView(GameOnPage);
 
-        var players = this.$store.getters.players;
-        if (!players || players.length === 0) {
-            this.$router.push('/');
-        }
-        
-        this.killers = GameService.shuffle(players);
+        this.killers = this.$store.getters.killersToDisplay;
+        (this.killers.length === 0) && this.$router.push('/');
     },
     methods: {
         ...mapActions(['setPageView']),
@@ -67,23 +69,8 @@ export default {
                 })
                 .then( (confirm) => {
                     if (confirm) {
-                        this.showKillerDetails(killer);
+                        this.$router.push({name: KillerDetails, params: { id: killer.id}});
                     }
-                    console.log("ok!", confirm);
-                });
-        },
-        showKillerDetails(killer) {
-            swal(`${killer.name}?`, {
-                    buttons: { 
-                        confirm: confirmBtn,
-                        cancel: cancelBtn 
-                    }
-                })
-                .then( (confirm) => {
-                    if (confirm) {
-                        
-                    }
-                    console.log("ok!", confirm);
                 });
         }
     },
@@ -107,10 +94,22 @@ export default {
     .killer {
         width: 150px;
         height: 150px;
+        position: relative;
         background: white;
         border-radius: 15px;
         margin: 0 0 20px 0;
         cursor: pointer;
+
+        &[disabled="disabled"] {
+            pointer-events: none;
+        }
+    }
+
+    .out-of-game {
+        position: absolute;
+        height: 100px;
+        top: 10px;
+        left: 27px;
     }
 
 </style>

@@ -2,23 +2,30 @@ import Vue from 'vue'
 import Vuex from 'vuex'
 import GameService from '../services/gameService'
 import StorageService from '../services/storageService'
+import cloneDeep from 'clone-deep'
 
 Vue.use(Vuex)
 
-export default new Vuex.Store({
-  state: {
+function _getNewStore() {
+  return {
     currentPage: '',
     playersCount: 0,
     players: [],
+    killers: [],
+    killersToDisplay: [],
+    gameFinished: false,
     gameSaved: false
-  },
-  mutations: {
-    loadGameData(state, gameData) {
-      state.currentPage = gameData.currentPage;
-      state.playersCount = gameData.playersCount;
-      state.players = gameData.players;
+  };
+}
 
-      //Object.assign(state, gameData);
+export default new Vuex.Store({
+  state: _getNewStore(),
+  mutations: {
+    setNewGame(state) {
+      state = Object.assign(state, _getNewStore());
+    },
+    loadGameData(state, gameData) {
+      state = Object.assign(state, gameData);
     },
     saveGameData(state) {
       state.gameSaved = true;
@@ -32,8 +39,16 @@ export default new Vuex.Store({
       state.playersCount = playersCount;
       state.gameSaved = false;
     },
-    setPlayers(state, players) {
-      state.players = players;
+    setPlayers(state, paylaod) {
+      state.killers = paylaod.killers;
+      state.players = paylaod.playersNames;
+      state.killersToDisplay = paylaod.killersToDisplay;
+      state.gameSaved = false;
+    },
+    setKillers(state, paylaod) {
+      state.killers = GameService.updateTargets(state.killers, paylaod.killerOutOfGameId);
+      state.killersToDisplay = GameService.updateTargets(state.killersToDisplay, paylaod.killerOutOfGameId);
+      state.gameFinished = GameService.isGameFinished(state.killersToDisplay);
       state.gameSaved = false;
     }
   },
@@ -57,14 +72,39 @@ export default new Vuex.Store({
       commit('setPlayersCount', numOfPlayers);
       commit('saveGameData');
     },
-    createPlayers({commit}, playersNames) {
-      commit('setPlayers', GameService.createPlayersArray(playersNames));
+    killerKillHisTarget({commit}, killerId) {
+      commit('setPlayersCount', numOfPlayers);
       commit('saveGameData');
+    },
+    createPlayers({commit}, playersNames) {
+      const killers = GameService.createPlayersArray(playersNames);
+      const killersToDisplay = GameService.shuffle(cloneDeep(killers));
+      
+      commit('setPlayers', {playersNames, killers, killersToDisplay});
+      commit('saveGameData');
+    },
+    killerIsOutOfGame({commit}, killerOutOfGameId) {
+      commit('setKillers', { killerOutOfGameId });
+      commit('saveGameData');
+    },
+    resetGame({commit}) {
+      StorageService.clear();
+      commit('setNewGame');
     }
   },
   getters: {
     playersCount: state => state.playersCount,
     players: state => state.players.map(player => Object.assign({}, player)),
+    killersToDisplay: state => state.killersToDisplay,
+    killer: state => (killerId) => {
+      var res = state.killers.filter(k => k.id === killerId);
+      if (res && res.length > 0) {
+        return res[0];
+      }
+
+      return null;
+    },
+    gameFinished: state => state.gameFinished,
     lastPage: state => state.currentPage
   }
 })

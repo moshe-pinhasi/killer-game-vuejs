@@ -23,11 +23,7 @@
                 
                 <transition name="fade" mode="out-in">
                     <div class="task" v-if="showTask">
-                        <div class="task-desc box">
-                            <span class="highlight">{{killers[index].name}}</span> Your task is to kill <br />
-                            <span class="highlight">{{killers[targetIndex].name}}</span> With the word <br />
-                            <span class="highlight">{{killers[targetIndex].killedWord}}</span>
-                        </div>
+                        <killer-details :killer="killers[index]"></killer-details>
                         <button class="btn btn-success btn-lg" @click="onNextKillerClicked">Got it!</button>
                     </div>
                 </transition>
@@ -42,7 +38,6 @@
             </div>
         </transition>
         
-        
     </section>
 </template>
 
@@ -52,6 +47,7 @@
 import { mapActions } from 'vuex';
 import { GameReadyPage, GameOnPage } from '../router'
 import GameService from '../services/gameService'
+import KillerDetails from '../components/KillerDetails'
 
 export default {
     data() {
@@ -59,22 +55,19 @@ export default {
             showDesc: true,
             killers: [],
             index: 0,
-            targetIndex: 1,
             callToKiller: false,
             showTask: false,
             finished: false,
             revealing: false
         }
     },
+    components: {
+        KillerDetails
+    },
     created() {
         this.setPageView(GameReadyPage);
-
-        var players = this.$store.getters.players;
-        if (!players || players.length === 0) {
-            this.$router.push('/');
-        }
-        
-        this.killers = GameService.shuffle(players);
+        this.killers = this.$store.getters.killersToDisplay;
+        (this.killers.length === 0) && this.$router.push('/');
     },
     methods: {
         ...mapActions(['setPageView']),
@@ -94,7 +87,6 @@ export default {
             this.index++;
             this.showTask = false;
             if (this.index >= this.killers.length) {
-                
                 this.revealing = false;
 
                 setTimeout( () => {
@@ -106,8 +98,6 @@ export default {
             setTimeout( () => {
                 this.callToKiller = true;
             }, 1010);
-            
-            this.targetIndex = (this.index + 1) >= this.killers.length ? 0 : (this.index + 1);
         },
         startGame() {
             this.$router.push({ name: GameOnPage });
@@ -148,13 +138,6 @@ export default {
         align-items: center;
     }
 
-    .box {
-        width: 100%;
-        padding: 20px;
-        background-color: white;
-        box-shadow: 0px 0px 39px 4px rgba(0,0,0,0.75);
-    }
-
     .btn {
         margin: 30px 0 0 0;
         cursor: pointer;
@@ -162,10 +145,6 @@ export default {
 
     .btn-finished {
         width: 100px;
-    }
-
-    .highlight {
-        color: #ffc13d;
     }
 </style>
 

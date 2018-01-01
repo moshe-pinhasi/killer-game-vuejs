@@ -26,7 +26,7 @@
 
 <script>
 'use strict'
-
+import shortid from 'shortid';
 import {mapActions} from 'vuex';
 import { SetPlayersPage, GameReadyPage } from '../router'
 
@@ -42,11 +42,8 @@ export default {
         if (!playersCount) {
             this.$router.push('/');
         }
-        for (var i=0; i<playersCount; i++) {
-            setTimeout( () => {
-                this.playersNames.push({id: new Date().getTime(), name: ''});
-            }, 1);            
-        }
+
+        this.playersNames = Array(playersCount).fill().map( (player, ind) => ({id: shortid.generate(), name: ''}))
     },
     methods: {
         ...mapActions(['createPlayers', 'setNumOfPlayers', 'setPageView']),

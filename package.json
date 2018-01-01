@@ -10,6 +10,8 @@
     "build": "cross-env NODE_ENV=production webpack --progress --hide-modules"
   },
   "dependencies": {
+    "clone-deep": "^2.0.1",
+    "shortid": "^2.2.8",
     "sweetalert": "^2.1.0",
     "vue": "^2.4.4",
     "vue-router": "^3.0.1",
