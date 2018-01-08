@@ -14,5 +14,5 @@ npm run dev
 # build for production with minification
 npm run build
 ```
-
+## Play the game
 see demo [here](http://pimoshe.com/apps/killer-game-vuejs/#/)
