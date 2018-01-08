@@ -5,6 +5,8 @@ import store from './store/store.js'
 
 import Vuelidate from 'vuelidate'
 
+import './assets/style.css'
+
 Vue.use(Vuelidate)
 
 // TODO: add manufest file (progressive web app)
