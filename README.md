@@ -15,4 +15,4 @@ npm run dev
 npm run build
 ```
 ## Play the game
-see demo [here](http://pimoshe.com/apps/killer-game-vuejs/#/)
+see demo [here](https://moshe-pinhasi.github.io/killer-game-vuejs)
